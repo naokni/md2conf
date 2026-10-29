@@ -375,7 +375,7 @@ class ConfluenceSessionV1(ConfluenceSessionShared):
             title=title,
             space=ConfluenceSpace(key=self.site.space_key or ""),
             body=ConfluencePageBody(storage=ConfluencePageStorage(representation=ConfluenceRepresentation.STORAGE, value=content)),
-            version=ConfluenceContentVersion(number=version, minorEdit=not self._options.notify),
+            version=ConfluenceContentVersion(number=version, minorEdit=not self._options.notify, message=message),
         )
         self._put(ConfluenceVersion.VERSION_1, path, body, None)
 

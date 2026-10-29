@@ -878,6 +878,8 @@ options:
   --no-line-numbers     Leave Markdown source file unmodified. (default)
   --global-properties PATH
                         JSON or YAML file of Confluence content properties to merge for every synchronized Markdown file.
+  --version-message STR
+                        Version message to set when a Confluence page is updated. Defaults to a message containing the Markdown file path.
   --notify              Notify users about changes when a Confluence page is updated.
   --no-notify           Trigger a minor edit on page updates, don't notify users about changes. (default)
   --ignore-invalid-url  Emit a warning but otherwise ignore relative URLs that point to ill-specified locations. (deprecated)
@@ -947,6 +949,7 @@ options = ProcessorOptions(
     ),
     line_numbers=bool(),
     global_properties=Path() or None,
+    version_message=str() or None,
 )
 with ConfluenceAPI(properties) as api:
     Publisher(api, options).process(mdpath)

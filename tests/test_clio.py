@@ -12,7 +12,9 @@ from dataclasses import dataclass, field
 from io import StringIO
 from typing import Literal
 
+from md2conf.__main__ import get_parser
 from md2conf.clio import add_arguments, boolean_option, composite_option, get_options, value_option
+from md2conf.options import ProcessorOptions
 
 
 @dataclass
@@ -51,6 +53,15 @@ class FlatOptions(Options):
 
 
 class TestCommandLine(unittest.TestCase):
+    def test_version_message(self) -> None:
+        parser = get_parser()
+
+        default_args = parser.parse_args(["document.md"])
+        self.assertIsNone(get_options(default_args, ProcessorOptions).version_message)
+
+        custom_args = parser.parse_args(["document.md", "--version-message", "Release 1.2"])
+        self.assertEqual(get_options(custom_args, ProcessorOptions).version_message, "Release 1.2")
+
     def test_hierarchical(self) -> None:
         parser = ArgumentParser()
         add_arguments(parser, NestedOptions)

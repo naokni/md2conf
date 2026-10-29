@@ -112,6 +112,23 @@ class TestPublisher(unittest.TestCase):
 
             self.assertNotEqual(current_digest, previous_digest)
 
+    def test_version_message(self) -> None:
+        "Checks if page updates use custom or generated version messages."
+
+        cases: tuple[tuple[str | None, str], ...] = (
+            (None, "Synchronized by md2conf from Markdown file: index.md"),
+            ("Release 1.2", "Release 1.2"),
+        )
+        for version_message, expected_message in cases:
+            with self.subTest(version_message=version_message), MockConfluenceAPI() as api, _create_temporary_directory() as source_dir:
+                (source_dir / "index.md").write_text("# Document\n", encoding="utf-8")
+                options = self.get_processor_options(api, keep_hierarchy=False, skip_update=True)
+                options.version_message = version_message
+
+                Publisher(api, options).process_directory(source_dir)
+
+                self.assertEqual(api.version_messages, [expected_message])
+
     def get_processor_options(self, api: ConfluenceSession, *, keep_hierarchy: bool, skip_update: bool) -> ProcessorOptions:
         return ProcessorOptions(
             root_page=ConfluencePageID(api.get_homepage_id("SPACE_ID")),

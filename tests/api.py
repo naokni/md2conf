@@ -59,9 +59,11 @@ class MockConfluenceSession(ConfluenceSession):
 
     _site: ConfluenceSiteMetadata
     _db: sqlite3.Connection
+    version_messages: list[str]
 
     def __init__(self) -> None:
         self._site = ConfluenceSiteMetadata(domain="example.atlassian.net", base_path="/wiki/", space_key="SPACE_KEY")
+        self.version_messages = []
         self._db = sqlite3.connect(":memory:")
         self._db.row_factory = sqlite3.Row
         self._db.execute(
@@ -494,6 +496,7 @@ class MockConfluenceSession(ConfluenceSession):
         self._db.commit()
         if cursor.rowcount == 0:
             raise ConfluenceError(f"page not found with ID: {page_id}")
+        self.version_messages.append(message)
 
     @override
     def create_page(self, *, title: str, content: str, parent_id: str, space_id: str) -> ConfluencePage:
